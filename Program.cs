@@ -120,24 +120,52 @@ class Program
                 string contenido = File.ReadAllText(nombreArchivo);
 
                 
-                string palabrasClave = "if|while|for|foreach|else if";
-                string tiposDeDato = "bool|char|string|int|float|double";
+                string patronSi = @"(?<!\w)si\([^)]*\)\s\{[^}]*\}";
+                string patronMientras = @"(?<!\w)mientras\([^)]*\)\s\{[^}]*\}";
+                string patronPara = @"(?<!\w)para\([^;]*;\s[^;]*;\s[^)]*\)\s\{[^}]*\}";
 
                 
-                string patron = @"\b(" + palabrasClave + "|" + tiposDeDato + @")\b";
-                MatchCollection coincidencias = Regex.Matches(contenido, patron);
+                MatchCollection coincidenciasSi = Regex.Matches(contenido, patronSi);
+                MatchCollection coincidenciasMientras = Regex.Matches(contenido, patronMientras);
+                MatchCollection coincidenciasPara = Regex.Matches(contenido, patronPara);
 
-                if (coincidencias.Count > 0)
+                if (coincidenciasSi.Count > 0)
                 {
-                    Console.WriteLine("Palabras clave y tipos de datos encontrados en el archivo:");
-                    foreach (Match coincidencia in coincidencias)
+                    Console.WriteLine("Expresiones 'si' bien estructuradas encontradas en el archivo:");
+                    foreach (Match coincidencia in coincidenciasSi)
                     {
                         Console.WriteLine(coincidencia.Value);
                     }
                 }
                 else
                 {
-                    Console.WriteLine("No se encontraron palabras clave ni tipos de datos en el archivo.");
+                    Console.WriteLine("No se encontraron expresiones 'si' bien estructuradas en el archivo.");
+                }
+
+                if (coincidenciasMientras.Count > 0)
+                {
+                    Console.WriteLine("Expresiones 'mientras' bien estructuradas encontradas en el archivo:");
+                    foreach (Match coincidencia in coincidenciasMientras)
+                    {
+                        Console.WriteLine(coincidencia.Value);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No se encontraron expresiones 'mientras' bien estructuradas en el archivo.");
+                }
+
+                if (coincidenciasPara.Count > 0)
+                {
+                    Console.WriteLine("Expresiones 'para' bien estructuradas encontradas en el archivo:");
+                    foreach (Match coincidencia in coincidenciasPara)
+                    {
+                        Console.WriteLine(coincidencia.Value);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No se encontraron expresiones 'para' bien estructuradas en el archivo.");
                 }
             }
             else
@@ -150,5 +178,12 @@ class Program
             Console.WriteLine($"Error al realizar el análisis léxico: {ex.Message}");
         }
     }
+
+
+
+    //si(condicion) { imprimir("hola"); }
+    //mientras(condicion = verdadera) { imrpimir("hola"); }
+    //para(i = 0; i< 1; i++) { imprimir = ("hola"); }
+
 }
 
